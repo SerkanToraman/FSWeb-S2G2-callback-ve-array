@@ -40,8 +40,6 @@ if(yilStageFiltre[0]['Home Team Goals']>yilStageFiltre[0]['Away Team Goals']){
 */
 
 
-
-
 function Finaller(arr) {
 	
 	let filtreDizi = arr.filter((data)=>{
@@ -87,17 +85,31 @@ console.log('Gorev 3 - Yillar',Yillar(fifaData,Finaller));
 	4. Tüm kazanan ülkelerin isimlerini içeren `kazananlar` adında bir dizi(array) döndürecek(return)  */ 
 
 function Kazananlar(fifaDataArr,finallerCb) {
-	const homeKazananlarArr = [];
-	const awayKazananlarArr = [];
+	// const homeKazananlarArr = [];
+	// const awayKazananlarArr = [];
 
+	// for (let i = 0; i< finallerCb(fifaDataArr).length;i++){
+	// 	if(finallerCb(fifaDataArr)[i]['Home Team Goals']>finallerCb(fifaDataArr)[i]['Away Team Goals']){
+	// 		homeKazananlarArr.push(finallerCb(fifaDataArr)[i]['Home Team Name'])
+	// 	} else if (finallerCb(fifaDataArr)[i]['Home Team Goals']<finallerCb(fifaDataArr)[i]['Away Team Goals']){
+	// 		awayKazananlarArr.push(finallerCb(fifaDataArr)[i]['Away Team Name'])
+	// 	} 
+	// }
+	// const tumKazananlarArr = homeKazananlarArr.concat(awayKazananlarArr);
+	
+	const tumKazananlarArr=[];
+		
 	for (let i = 0; i< finallerCb(fifaDataArr).length;i++){
 		if(finallerCb(fifaDataArr)[i]['Home Team Goals']>finallerCb(fifaDataArr)[i]['Away Team Goals']){
-			homeKazananlarArr.push(finallerCb(fifaDataArr)[i]['Home Team Name'])
+			tumKazananlarArr.push(finallerCb(fifaDataArr)[i]['Home Team Name'])
 		} else if (finallerCb(fifaDataArr)[i]['Home Team Goals']<finallerCb(fifaDataArr)[i]['Away Team Goals']){
-			awayKazananlarArr.push(finallerCb(fifaDataArr)[i]['Away Team Name'])
-		} 
+			tumKazananlarArr.push(finallerCb(fifaDataArr)[i]['Away Team Name'])
+		} else{
+			tumKazananlarArr.push(finallerCb(fifaData)[i]['Win conditions'].split(' win')[0]);
+		}
 	}
-	const tumKazananlarArr = homeKazananlarArr.concat(awayKazananlarArr);
+	
+
 	return tumKazananlarArr;
 }
 
@@ -124,10 +136,15 @@ function YillaraGoreKazananlar(fifaDataArr,finallerCb,yillarCb,kazananlarCb) {
 		herYilinKazananiArray.push(kazananCumlesi);
 	}
 
-console.log('deneme',herYilinKazananiArray);
+//console.log('deneme',herYilinKazananiArray);
+
+return herYilinKazananiArray;
 
 }
-YillaraGoreKazananlar(fifaData,Finaller,Yillar,Kazananlar);
+console.log(YillaraGoreKazananlar(fifaData,Finaller,Yillar,Kazananlar));
+
+
+
 
 /*  Görev 6: 
 	Bir higher order fonksiyonu olan `OrtalamaGolSayisi` isimli fonksiyona aşağıdakileri uygulayın: 
@@ -143,15 +160,25 @@ YillaraGoreKazananlar(fifaData,Finaller,Yillar,Kazananlar);
 	
 */
 
-function OrtalamaGolSayisi(finalFunc=(FinallerCb(fifaDataArr))) {
-
+function OrtalamaGolSayisi(finalFunc = Finaller(fifaData)) {
 const totalGoals = (finalFunc.reduce((total,score)=>{
 return total+(score['Home Team Goals']+score['Away Team Goals'])},0)/finalFunc.length).toFixed(2);
 
 return totalGoals;
+
 }
 
- console.log('Gorev 6 - OrtalamaGolSayisi',OrtalamaGolSayisi(Finaller(fifaData)));
+ console.log('Gorev 6 - OrtalamaGolSayisi',OrtalamaGolSayisi());
+
+// Opsiyon 2 Mac basi gol sayisini bulmak
+//  function OrtalamaGolSayisi2(callback) {
+//   const macBasiGol = callback.map(val => {
+//     return val["Home Team Goals"] + val["Away Team Goals"];
+//   });
+
+//   console.log(macBasiGol);
+// }
+// OrtalamaGolSayisi2(Finaller(fifaData));
 
 /// EKSTRA ÇALIŞMALAR ///
 
@@ -161,23 +188,98 @@ return totalGoals;
 	İpucu: "takım kısaltmaları" (team initials) için datada araştırma yapın!
 İpucu: `.reduce` Kullanın*/
 
+//Kendi denemem--------
+
 function UlkelerinKazanmaSayilari(data,takimKisaltmalari) {
 	
+	const finalYillar = Finaller(fifaData);
 	
-   
+	const tumKazananlarArr=Kazananlar(fifaData,Finaller);
 	
-}
+	const tumKazananlarKisaltmaArr = [];
+	for (let i =0; i<tumKazananlarArr.length; i++){
+		if(tumKazananlarArr[i]=== finalYillar[i]['Home Team Name']){
+			tumKazananlarKisaltmaArr.push(finalYillar[i]['Home Team Initials'])
+		}else{
+			tumKazananlarKisaltmaArr.push(finalYillar[i]['Away Team Initials'])
+		}
+	}
+
+	let tumKazananlarKisaltmaTekrar = tumKazananlarKisaltmaArr.reduce((acc, curr) => {
+    if (typeof acc[curr] == 'undefined') {
+      acc[curr] = 1;
+    } else {
+      acc[curr] += 1;
+    }
+    return acc;
+}, {});
+
+	return `${takimKisaltmalari} kazanma sayisi : ${tumKazananlarKisaltmaTekrar[takimKisaltmalari]}`;
+	}
+	  
+	console.log('Bonus 1 -',UlkelerinKazanmaSayilari(fifaData,'ITA'));
+
+// Etut Cozumu ---------------------
+	// function UlkelerinKazanmaSayilari(data, initial) {
+	// 	let finalTakimlarList = Kazananlar(fifaData, Finaller).slice();
+	// 	let finalTakimlarKazanmaSayilari = {};
+	// 	let initialList = {};
+	// 	let returnListe = {};
+	// 	let result = {};
+	
+	// 	for (let i = 0; i < finalTakimlarList.length; i++) {
+	// 		if (finalTakimlarList[i] in finalTakimlarKazanmaSayilari) {
+	// 			finalTakimlarKazanmaSayilari[finalTakimlarList[i]] += 1;
+	// 		} else {
+	// 			finalTakimlarKazanmaSayilari[finalTakimlarList[i]] = 1;
+	// 		}
+	// 	}
+	
+	// 	for (let i = 0; i < data.length; i++) {
+	// 		if (data[i]["Home Team Name"] in initialList === false) {
+	// 			initialList[data[i]["Home Team Name"]] = data[i]["Home Team Initials"];
+	// 		} else if (data[i]["Away Team Name"] in initialList === false) {
+	// 			initialList[data[i]["Away Team Name"]] = data[i]["Away Team Initials"];
+	// 		}
+	// 	}
+
+	// 	for (const key in finalTakimlarKazanmaSayilari) {
+	// 		returnListe[initialList[key]] = finalTakimlarKazanmaSayilari[key];
+	// 	}
+	
+	// 	result = initial + ": " + returnListe[initial];
+	// 	return result;
+	// }
+	// console.log(
+	// 	"Bonus 1 Kazanma Sayısı ITA",
+	// 	UlkelerinKazanmaSayilari(fifaData, "ITA")
+	// );
+	
 
 
 
 /*  BONUS 2:  
 EnCokGolAtan() isminde bir fonksiyon yazın, `data` yı parametre olarak alsın ve Dünya kupası finallerinde en çok gol atan takımı döndürsün */
 
-function EnCokGolAtan(/* kodlar buraya */) {
+function EnCokGolAtan(fifaData) {
 	
-    /* kodlar buraya */
+  const finalYillar = Finaller(fifaData);
+	
+	const tumKazananlarArr=Kazananlar(fifaData,Finaller);
+
+	const tumKazananlarTek = {};
+
+	console.log(tumKazananlarArr);
+
+	for (let i = 0; i<tumKazananlarArr;i++){
+		if(tumKazananlarArr[i] in tumKazananlarTek === false){
+			tumKazananlarTek.push(tumKazananlarArr[i]);
+		}
+	}
+	console.log(tumKazananlarTek);
 	
 }
+EnCokGolAtan(fifaData);
 
 
 /*  BONUS 3: 
