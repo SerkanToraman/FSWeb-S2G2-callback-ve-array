@@ -204,6 +204,7 @@ function UlkelerinKazanmaSayilari(data,takimKisaltmalari) {
 			tumKazananlarKisaltmaArr.push(finalYillar[i]['Away Team Initials'])
 		}
 	}
+	console.log(tumKazananlarKisaltmaArr);
 	
 	let tumKazananlarKisaltmaTekrar = tumKazananlarKisaltmaArr.reduce((acc, curr) => {
     if (typeof acc[curr] == 'undefined') {
@@ -265,43 +266,90 @@ console.log('Bonus 1 -',UlkelerinKazanmaSayilari(fifaData,'ITA'));
 /*  BONUS 2:  
 EnCokGolAtan() isminde bir fonksiyon yazın, `data` yı parametre olarak alsın ve Dünya kupası finallerinde en çok gol atan takımı döndürsün */
 
-//Kendi Denemem
+////Kendi Denemem1
+// function EnCokGolAtan(fifaData) {
+	
+//   const finalYillar = Finaller(fifaData);
+// 	const tumKazananlarArr=Kazananlar(fifaData,Finaller);
+// 	const liste={};
+
+// 	tumKazananlarArr.forEach((sira)=>{
+// 		liste[sira]=0;
+
+// 		for(let i= 0; i<finalYillar.length;i++ ){
+// 			if(sira ==finalYillar[i]['Home Team Name']){
+// 				liste[sira]+=finalYillar[i]['Home Team Goals']
+// 			}
+// 		}
+// 		for(let i= 0; i<finalYillar.length;i++ ){
+// 			if(sira ==finalYillar[i]['Away Team Name']){
+// 				liste[sira]+=finalYillar[i]['Away Team Goals']
+// 			}
+// 		}
+// 	});
+// 	console.log('gol',liste)
+	
+// 	const golArray = Object.values(liste);
+// 	const takimArray = Object.keys(liste);
+// 	let maxGolAtanTakim;
+	
+// 	for (let i = 0; i<golArray.length; i++){
+// 		if(Math.max(...golArray)== golArray[i]){
+// 			maxGolAtanTakim = `${takimArray[i]} ${golArray[i]} golle en fazla gol atan takim`
+// 		}
+// 	}
+// 		return maxGolAtanTakim;
+// 	}
+	
+	
+// console.log('En cok Gol Atan',EnCokGolAtan(fifaData));
+
+////Kendi Denemem2
+
 function EnCokGolAtan(fifaData) {
 	
   const finalYillar = Finaller(fifaData);
-	const tumKazananlarArr=Kazananlar(fifaData,Finaller);
-	const liste={};
-
-	tumKazananlarArr.forEach((sira)=>{
-		liste[sira]=0;
-
-		for(let i= 0; i<finalYillar.length;i++ ){
-			if(sira ==finalYillar[i]['Home Team Name']){
-				liste[sira]+=finalYillar[i]['Home Team Goals']
-			}
-		}
-		for(let i= 0; i<finalYillar.length;i++ ){
-			if(sira ==finalYillar[i]['Away Team Name']){
-				liste[sira]+=finalYillar[i]['Away Team Goals']
-			}
-		}
+	console.log('final Yillar',finalYillar);
+	const tumKazananlarArr=Kazananlar(fifaData,Finaller).filter((ulkeler,index) => {return Kazananlar(fifaData,Finaller).indexOf(ulkeler)==index;
 	});
-	console.log('gol',liste)
-	
-	const golArray = Object.values(liste);
-	const takimArray = Object.keys(liste);
-	let maxGolAtanTakim;
-	
-	for (let i = 0; i<golArray.length; i++){
-		if(Math.max(...golArray)== golArray[i]){
-			maxGolAtanTakim = `${takimArray[i]} ${golArray[i]} golle en fazla gol atan takim`
+	console.log('tumkazananlar',tumKazananlarArr);
+	let liste ={};
+	tumKazananlarArr.forEach((takim)=>{
+		liste[takim] = finalYillar.reduce((p,c)=>{
+		if(takim == c['Home Team Name']){
+			p = p+c['Home Team Goals']
+		} if(takim == c['Away Team Name']){
+			p = p+c['Away Team Goals']
 		}
-	}
-		return maxGolAtanTakim;
-	}
-	
-	
+		return p;
+	},0);
+});
+console.log('deneme',liste);
+
+//console.log(liste);
+	return liste;
+}
 console.log('En cok Gol Atan',EnCokGolAtan(fifaData));
+
+////Kendi Denemem2-1
+// function EnCokGolAtan(fifaData) {
+//   const finalYillar = Finaller(fifaData);
+//   const tumKazananlarArr=Kazananlar(fifaData,Finaller);
+//   let liste =[];
+//   liste = tumKazananlarArr.forEach((takim)=>{
+//     liste[takim] =finalYillar.reduce((p,c)=>{
+//     if(takim == c['Home Team Name']){
+//       return p+c['Home Team Goal']
+//     } else{
+//       return p;
+//     }
+//   },0);
+// });
+
+// //console.log(liste);
+//   return liste;
+// }
+// console.log('En cok Gol Atan',EnCokGolAtan(fifaData));
 
 // // Etut
 
